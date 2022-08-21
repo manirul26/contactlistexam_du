@@ -34,11 +34,13 @@ export default function Editcontact({ navigation, route }) {
      setContactInfo(contacts);
      setFirstName(contacts.givenName);
      setLastName(contacts.familyName);
+     const a = contacts.phoneNumbers.map((item) => (item.number));
+     setPhoneNumbers(a);
    });
    
    }
 
-   useEffect(() => {
+    useEffect(() => {
     if (phoneNumbers[phoneNumbers.length - 1].length > 0) {
        setPhoneNumbers((prevState) => [...prevState, '']);
     }
@@ -51,7 +53,7 @@ export default function Editcontact({ navigation, route }) {
           })
        }
     } catch { }
- }, [phoneNumbers])
+ }, [phoneNumbers]) 
 
    async function addContact() {
     try {
@@ -59,9 +61,7 @@ export default function Editcontact({ navigation, route }) {
           PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS
        );
        if (permission === 'granted') {
-          // alert('Permission ok')
-          /////////////////////////////////////////////////////////////
-          if ((!firstName && !lastName) || phoneNumbers.length === 1) {
+           if ((!firstName && !lastName) || phoneNumbers.length === 1 || route.params.contactInfo.id == "") {
              Alert.alert('Fill Up all the Required Fields');
              return;
           }
@@ -70,14 +70,38 @@ export default function Editcontact({ navigation, route }) {
           });
 
           const contactInfo = {
+            recordID: route.params.contactInfo.id,
              displayName: firstName + ' ' + lastName,
              givenName: firstName + ' ' + lastName,
-             phoneNumbers: myPhonenumbers
+            // phoneNumbers: myPhonenumbers
           }
-          Contacts.updateContact(contactInfo)
-             .then(() => navigation.navigate('Contactlist'))
-             .catch((error) => console.log(error))
+            Contacts.updateContact(contactInfo, (err) => {
+              if (err) throw err;
+              // record updated
+            }) 
+         
+          // update the first record
+/*   let someRecord = contacts[0]
+  someRecord.emailAddresses.push({
+    label: "junk",
+    email: "mrniet+junkmail@test.com",
+  })
+  Contacts.updateContact(someRecord, (err) => {
+    if (err) throw err;
+    // record updated
+  }) */
 
+       /*    const contactInfo = {
+            recordID: route.params.contactInfo.id,
+             displayName: firstName + ' ' + lastName,
+             givenName: firstName + ' ' + lastName,
+            // phoneNumbers: myPhonenumbers
+          } */
+      /*    console.log('con' + contactInfo)
+           Contacts.updateContact(contactInfo)
+             .then(() => navigation.navigate('Contactlist'))
+             .catch((error) => console.log(error)) */
+ 
           ////////////////////////////////////////////////////////////
        }
     } catch (error) {
@@ -96,6 +120,7 @@ export default function Editcontact({ navigation, route }) {
    return (
       <View style={styles.container}>
              <View style={styles.inputContainer}>
+               
             <TextInput
                label="First Name"
                leading={props =>
@@ -112,6 +137,9 @@ export default function Editcontact({ navigation, route }) {
             />
          </View>
          <View style={{ flex: 1, marginTop: 20 }}>
+         {phoneNumbers.map((phoneNumber, index) => (
+            <View style={{ ...styles.inputContainer, marginVertical: 0 }}
+               key={index}>
             <FlatList 
                data={contactInfo.phoneNumbers}
                keyExtractor={(item) => item.id}
@@ -122,6 +150,7 @@ export default function Editcontact({ navigation, route }) {
                label="Phone No"
                leading={props =>
                   <FontAwesome5 name='phone-alt' size={15} color='black' />}
+                  defaultValue={phoneNumbers}
                value={item.number}
                onChangeText={(text) => setPhoneNumbers((prevState) => {
                 const newState = prevState.slice();
@@ -132,6 +161,8 @@ export default function Editcontact({ navigation, route }) {
 
                )}
             />
+              </View>
+         ))}
          </View>
    
 {/*          <View style={{ flex: 1, marginTop: 20 }}>

@@ -47,10 +47,11 @@ export default function Profile({ navigation, route }) {
          .then(() => navigation.navigate('Contactlist'))
          .catch((error) => console.log(error));
    }
-   function editContactfun(contact) {
-      navigation.navigate('Editcontact', {
+   function editContactfun(autoid) {
+    /*    navigation.navigate('Editcontact', {
          contactInfo: { id: autoid }
-      }) 
+      })   */
+      Contacts.openExistingContact(autoid);
    }
    
    if(!contactInfo) {
@@ -76,7 +77,8 @@ export default function Profile({ navigation, route }) {
                style={{ position: 'absolute', top: StatusBar.currentHeight, right: 20 }}
             />
              <AntDesign
-               onPress={() => editContactfun(contactInfo)}
+              /*  onPress={() => editContactfun(contactInfo)} */
+              onPress={() => editContactfun(contactInfo)}
                name='edit' size={28} color='white'
                style={{ position: 'absolute', top: StatusBar.currentHeight, right: 80 }}
             />
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
      position: 'absolute',
      bottom: 20,
      left: 20,
-     fontSize: 30,
+     fontSize: 12,
      color: 'white',
      fontWeight: 'bold'
    },

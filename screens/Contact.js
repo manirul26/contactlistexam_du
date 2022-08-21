@@ -61,7 +61,7 @@ export default function Contact({ navigation }) {
          }
       } catch (error) {
          // console.log(error);
-         alert(error)
+       //  alert(error)
       }
       /*   
        */

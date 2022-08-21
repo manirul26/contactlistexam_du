@@ -4,16 +4,12 @@ import {
    StyleSheet,
    TouchableOpacity,
    PermissionsAndroid,
-   SafeAreaView,ActivityIndicator
+   SafeAreaView,ActivityIndicator, Text, View
 } from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Contacts from 'react-native-contacts';
 import { useIsFocused } from '@react-navigation/native';
 import { TextInput } from "@react-native-material/core";
 import ContactDetalis from '../components/ContactDetalis';
-import AntDesign from 'react-native-vector-icons/AntDesign'; 
 
 import { withNavigation } from 'react-navigation';
 
@@ -29,6 +25,9 @@ export default function MyContacts({ navigation }) {
       getAllContacts();
    }, [isFocused])
 
+    useEffect( () => () => console.log("data1 update or unmount"), [ myContacts ] );
+ 
+
 
    async function getAllContacts() {
       try {
@@ -37,7 +36,6 @@ export default function MyContacts({ navigation }) {
          );
          if (permission === 'granted') {
             const contacts = await Contacts.getAll();
-            // console.log(contacts);
             setMyContacts(contacts);
             setLoading(false);
          }
@@ -46,9 +44,8 @@ export default function MyContacts({ navigation }) {
       }
    }
 
-  const searchFilter = (text) => {
+ /*  const searchFilter = (text) => {
      if(text){
-       // console.log(text)
       setLoading(true);
        const phoneNumberRegex = /\b[\+]?[(]?[0-9]{2,6}[)]?[-\s\.]?[-\s\/\.0-9]{3,15}\b/m;
         const emailAddressRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
@@ -75,19 +72,20 @@ export default function MyContacts({ navigation }) {
 
      }
   }
-
+ */
 
    return (
       <SafeAreaView style={styles.container}>
-        {/*  <ActivityIndicator size={32} /> search1 */}
-         <TextInput
+       {/*   <TextInput
            leading={props =>
             <AntDesign name='search1' size={20} color='black' />}
             onChangeText={(text) => searchFilter(text)}
-         />
+         /> */}
          {
             isLoading == true ?
-            <ActivityIndicator size={32} style={{ alignContent: 'center' }} />
+            <View style={styles.spinner}>
+            <ActivityIndicator size={32}/>
+            </View>
             :
             <FlatList
             isLoading ={isLoading}
@@ -97,11 +95,11 @@ export default function MyContacts({ navigation }) {
                   <TouchableOpacity onPress={() => navigation.navigate('Profile', {
                      contactInfo: { id: item.recordID }
                   })}>
-   
+                  
                      <ContactDetalis contactInfo={item}
                         data={item.recordID}
                         navigation={navigation} key={item.recordID}
-                     />
+                     /> 
                   </TouchableOpacity>
                )}
             />
@@ -158,4 +156,10 @@ const styles = StyleSheet.create({
       backgroundColor: 'red',
       right: 0,
    },
+   spinner: {
+      flex: 1,
+      flexDirection: 'column',
+      alignContent: "center",
+      justifyContent: "center"
+    }
 })
